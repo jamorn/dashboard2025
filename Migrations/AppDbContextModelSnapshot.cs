@@ -79,10 +79,14 @@ namespace BackendAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("MachineClass")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("MachineName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("MachineId");
 
@@ -154,26 +158,36 @@ namespace BackendAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BackendAPI.Models.RemarkItem", b =>
+            modelBuilder.Entity("BackendAPI.Models.Machine", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.OwnsMany("BackendAPI.Models.RemarkItem", "RemarkItems", b1 =>
+                        {
+                            b1.Property<int>("MachineId")
+                                .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
 
-                    b.Property<string>("ItemText")
-                        .HasColumnType("nvarchar(max)");
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
-                    b.Property<int>("MachineId")
-                        .HasColumnType("int");
+                            b1.Property<string>("ItemText")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RecordDate")
-                        .HasColumnType("datetime2");
+                            b1.Property<DateTime>("RecordDate")
+                                .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                            b1.HasKey("MachineId", "Id");
 
-                    b.ToTable("RemarkItems");
+                            b1.ToTable("RemarkItems");
+
+                            b1.WithOwner("Machine")
+                                .HasForeignKey("MachineId");
+
+                            b1.Navigation("Machine");
+                        });
+
+                    b.Navigation("RemarkItems");
                 });
 #pragma warning restore 612, 618
         }
