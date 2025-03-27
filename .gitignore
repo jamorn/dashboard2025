@@ -27,9 +27,11 @@
 # Debug files
 /Debug/
 
-# local settings
+# appsettings
+appsettings.json
 appsettings.Development.json
-launchSettings.json
+appsettings.*.json
+!appsettings.example.json
 
 # User-specific files
 *.rsuser
