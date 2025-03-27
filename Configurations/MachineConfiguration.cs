@@ -1,23 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+using BackendAPI.Models; // Ensure the namespace containing 'Unit' is included
+
 namespace BackendAPI.Models;
 
 public class MachineConfiguration : IEntityTypeConfiguration<Machine>
 {
     public void Configure(EntityTypeBuilder<Machine> builder)
     {
-        builder.HasData(
-            new Machine { MachineId = 1, MachineName = "PP12/A", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 2, MachineName = "PP12/C", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 3, MachineName = "PP3/A", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 4, MachineName = "PP3/B", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 5, MachineName = "PPE/C", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 6, MachineName = "PPE/D", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 7, MachineName = "PPC/A", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 8, MachineName = "PPC/B", MachineClass = "g1", MachineActive = true },
-            new Machine { MachineId = 9, MachineName = "HDPE/A", MachineClass = "g1", MachineActive = true }
-        );
+      
         // Seed data สำหรับ RemarkItems เป็นค่าเริ่มต้นสำหรับ RemarkItems
         // ใส่ comment ไว้ Remark Items data ถูกเพิ่มผ่าน SSMS แล้ว ด้วยคำสั่ง SQL แล้ว
         /* ให้ เปิดออกกรณีที่ต้องการใช้งาน เมื่อสร้างโปรเจคใหม่ ที่เครื่อง computer เครื่องอื่น
@@ -57,7 +49,15 @@ public class MachineConfiguration : IEntityTypeConfiguration<Machine>
 
         // กำหนดความสัมพันธ์ระหว่าง Machine และ RemarkItems
         // เมื่อ run กับเครื่อง pc ใหม่ ให้ปิด comment ด้านล่าง แล้วเปิดด้านบนแทน
-        builder.OwnsMany(m => m.RemarkItems);
+                // Define foreign key relationship
+        builder.HasOne(m => m.Unit)
+               .WithMany()
+               .HasForeignKey(m => m.UnitId)
+               .HasPrincipalKey(u => u.costcenter);
+        builder.HasMany<RemarkItem>()
+            .WithOne(r => r.Machine)
+            .HasForeignKey(r => r.MachineId)
+            .OnDelete(DeleteBehavior.Cascade);
         /*
         ความหมายและการทำงาน:
                 1.OwnsMany หมายถึง:
@@ -87,3 +87,77 @@ public class MachineConfiguration : IEntityTypeConfiguration<Machine>
         */
     }
 }
+/*
+
+public class MachineConfiguration : IEntityTypeConfiguration<Machine>
+    {
+        public void Configure(EntityTypeBuilder<Machine> builder)
+        {
+            /* 
+            === Database Schema ===
+            CREATE TABLE [bagging].[dbo].[Machines] (
+                MachineId INT PRIMARY KEY,
+                MachineName VARCHAR(50),
+                MachineClass VARCHAR(10),
+                MachineActive BIT,
+                UnitId VARCHAR(10),
+                MachineLine VARCHAR(50),
+                FOREIGN KEY (UnitId) REFERENCES UnitPLBG(costcenter)
+            );
+
+            === Initial Data ===
+            INSERT INTO [bagging].[dbo].[Machines] 
+            (MachineId, MachineName, MachineClass, MachineActive, UnitId, MachineLine) VALUES
+            (1, 'PP12/A', 'g1', 1, '10111203', 'A'),
+            (2, 'PP12/C', 'g1', 1, '10111203', 'C'),
+            (3, 'PP3/A', 'g1', 1, '10111204', 'A'),
+            (4, 'PP3/B', 'g1', 1, '10111204', 'B'),
+            (5, 'PPE/C', 'g1', 1, '10111205', 'C'),
+            (6, 'PPE/D', 'g1', 1, '10111205', 'D'),
+            (7, 'PPC/A', 'g1', 1, '10111206', 'A'),
+            (8, 'PPC/B', 'g1', 1, '10111206', 'B'),
+            (9, 'HDPE/A', 'g1', 1, '10111202', 'A');
+            */
+
+            // Table configuration
+             /*
+            builder.ToTable("Machines", "dbo");
+
+            // Primary key
+            builder.HasKey(m => m.MachineId);
+            builder.Property(m => m.MachineId)
+                  .ValueGeneratedNever();
+
+            // Properties
+            builder.Property(m => m.MachineName)
+                  .HasMaxLength(50)
+                  .IsRequired();
+
+            builder.Property(m => m.MachineClass)
+                  .HasMaxLength(10)
+                  .IsRequired();
+
+            builder.Property(m => m.UnitId)
+                  .HasMaxLength(10)
+                  .IsRequired();
+
+            builder.Property(m => m.MachineLine)
+                  .HasMaxLength(50)
+                  .IsRequired();
+
+            // Relationships
+           
+            builder.HasOne(m => m.Unit)
+                  .WithMany()
+                  .HasForeignKey(m => m.UnitId)
+                  .HasPrincipalKey(u => u.CostCenter)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            builder.OwnsMany(m => m.RemarkItems);
+         */
+            /* Note: RemarkItems data should be added using SQL script:
+            See RemarkItems.sql for the insert statements
+           
+        }
+    } */
+
