@@ -1,0 +1,71 @@
+# Compiled output
+/bin
+/obj
+/packages
+/TestResults
+
+# Visual Studio files
+*.user
+*.suo
+*.vs/
+*.csproj.user
+
+# Other files
+*.log
+*.cache
+
+# Entity Framework Migrations
+/Migrations/*Designer.cs
+
+# NuGet cache files
+/project.assets.json
+/project.nuget.cache
+*.nuget.g.props
+*.nuget.g.targets
+*.nuget.dgspec.json
+
+# Debug files
+/Debug/
+
+# Database files
+DatabaseBackup/
+*.bak
+
+# Configuration files
+appsettings.json
+appsettings.Development.json
+appsettings.*.json
+!appsettings.example.json
+
+# User-specific files
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code (allow specific files)
+.vscode/*
+!.vscode/settings.json
+!.vscode/snippets.code-snippets
+
+# Allow documentation
+!docs/
+!docs/**/*.md
+!docs/**/*.dbml
+!docs/database/
+!docs/ai-conversations/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/

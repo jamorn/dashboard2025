@@ -1,0 +1,24 @@
+## Project specific ignores
+DatabaseBackup/
+*.bak
+
+## Configuration files
+appsettings.json
+appsettings.Development.json
+!appsettings.example.json
+
+## Development configuration
+appsettings.Development.json
+appsettings.Local.json
+
+## Documentation files to include
+!docs/
+!docs/**/*.md
+!docs/**/*.dbml
+!docs/database/
+!docs/ai-conversations/
+
+## VS Code specific
+.vscode/*
+!.vscode/settings.json
+!.vscode/snippets.code-snippets
