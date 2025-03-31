@@ -1,0 +1,45 @@
+## Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.cache
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+
+## Database files
+DatabaseBackup/
+*.bak
+*.dbmdl
+*.jfm
+
+## Logs and temporary files
+*.log
+[Tt]emp/
+*.tmp
+
+## VS Code files (allow specific files)
+.vscode/*
+!.vscode/settings.json
+!.vscode/snippets.code-snippets
+
+## Documentation (allow specific folders and files)
+!docs/
+!docs/**/*.md
+!docs/**/*.dbml
+!docs/database/
+!docs/ai-conversations/
+
+## NuGet
+packages/
+*.nupkg
+
+## Project specific ignores
+appsettings.Development.json
+appsettings.Local.json

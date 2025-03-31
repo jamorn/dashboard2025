@@ -15,17 +15,19 @@ namespace BackendAPI.Configurations
             builder.HasKey(u => u.UnitId);
 
             builder.Property(u => u.UnitName)
-                .IsRequired()
-                .HasMaxLength(100);
+                .HasColumnType("varchar(50)")
+                .UseCollation("Thai_CI_AS")
+                .IsRequired(false);
 
-            builder.Property(u => u.costcenter)
-                .IsRequired()
-                .HasMaxLength(10);
+            builder.Property(u => u.CostCenter)
+                .HasColumnType("varchar(10)")
+                .UseCollation("Thai_CI_AS")
+                .IsRequired(false);
 
             // กำหนดความสัมพันธ์กับ Machine
             builder.HasMany(u => u.Machines)
                 .WithOne(m => m.Unit)
-                .HasForeignKey(m => m.UnitId)
+                .HasForeignKey(m => m.CostCenter)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

@@ -12,10 +12,16 @@ namespace BackendAPI.Models
     {
         [Key]
         public int UnitId { get; set; }
-        public required string UnitName { get; set; }
-        public required string costcenter { get; set; }
+
+        [Required]
+        [Column(TypeName = "varchar(50)")]
+        public string UnitName { get; set; } = string.Empty;
+
+        [Required]
+        [Column(TypeName = "varchar(10)")]
+        public string CostCenter { get; set; } = string.Empty;
 
         // Navigation property
-        public required virtual ICollection<Machine> Machines { get; set; }
+        public virtual ICollection<Machine> Machines { get; set; } = new List<Machine>();
     }
 }

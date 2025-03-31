@@ -36,6 +36,9 @@ namespace BackendAPI.Migrations
                     b.Property<decimal>("Giveaway")
                         .HasColumnType("decimal(18, 3)");
 
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("MachineId")
                         .HasColumnType("int");
 
@@ -51,7 +54,14 @@ namespace BackendAPI.Migrations
                     b.Property<DateTime>("RecordDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ResponsiblePerson")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("MachineId", "RecordDate")
+                        .IsUnique();
 
                     b.ToTable("Dashboards", t =>
                         {
@@ -67,6 +77,47 @@ namespace BackendAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BackendAPI.Models.KPI", b =>
+                {
+                    b.Property<int>("Item")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Item"));
+
+                    b.Property<decimal?>("GiveAwayMax")
+                        .HasColumnType("decimal(10,3)");
+
+                    b.Property<decimal?>("GiveAwayMin")
+                        .HasColumnType("decimal(10,3)");
+
+                    b.Property<decimal?>("GiveAway_Target")
+                        .HasColumnType("decimal(10,3)");
+
+                    b.Property<decimal?>("Oee_Target")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<decimal?>("Waste_Film_Target")
+                        .HasColumnType("decimal(10,3)");
+
+                    b.Property<decimal?>("Waste_Pellet_Target")
+                        .HasColumnType("decimal(10,3)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Item");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("KPI");
+                });
+
             modelBuilder.Entity("BackendAPI.Models.Machine", b =>
                 {
                     b.Property<int>("MachineId")
@@ -74,6 +125,11 @@ namespace BackendAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineId"));
+
+                    b.Property<string>("CostCenter")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("MachineActive")
                         .HasColumnType("bit");
@@ -83,6 +139,11 @@ namespace BackendAPI.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<string>("MachineLine")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("MachineName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -90,104 +151,126 @@ namespace BackendAPI.Migrations
 
                     b.HasKey("MachineId");
 
-                    b.ToTable("Machines");
+                    b.HasIndex("CostCenter");
 
-                    b.HasData(
-                        new
-                        {
-                            MachineId = 1,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PP12/A"
-                        },
-                        new
-                        {
-                            MachineId = 2,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PP12/C"
-                        },
-                        new
-                        {
-                            MachineId = 3,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PP3/A"
-                        },
-                        new
-                        {
-                            MachineId = 4,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PP3/B"
-                        },
-                        new
-                        {
-                            MachineId = 5,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PPE/C"
-                        },
-                        new
-                        {
-                            MachineId = 6,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PPE/D"
-                        },
-                        new
-                        {
-                            MachineId = 7,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PPC/A"
-                        },
-                        new
-                        {
-                            MachineId = 8,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "PPC/B"
-                        },
-                        new
-                        {
-                            MachineId = 9,
-                            MachineActive = true,
-                            MachineClass = "g1",
-                            MachineName = "HDPE/A"
-                        });
+                    b.ToTable("Machines");
+                });
+
+            modelBuilder.Entity("BackendAPI.Models.RemarkItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ItemText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MachineId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RecordDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MachineId", "RecordDate");
+
+                    b.ToTable("RemarkItems");
+                });
+
+            modelBuilder.Entity("BackendAPI.Models.UnitPLBG", b =>
+                {
+                    b.Property<int>("UnitId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitId"));
+
+                    b.Property<string>("CostCenter")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("UnitName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("UnitId");
+
+                    b.ToTable("UnitPLBG");
+                });
+
+            modelBuilder.Entity("BackendAPI.Models.Dashboard", b =>
+                {
+                    b.HasOne("BackendAPI.Models.Machine", "Machine")
+                        .WithMany("Dashboards")
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("BackendAPI.Models.KPI", b =>
+                {
+                    b.HasOne("BackendAPI.Models.UnitPLBG", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .HasPrincipalKey("CostCenter")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("BackendAPI.Models.Machine", b =>
                 {
-                    b.OwnsMany("BackendAPI.Models.RemarkItem", "RemarkItems", b1 =>
-                        {
-                            b1.Property<int>("MachineId")
-                                .HasColumnType("int");
+                    b.HasOne("BackendAPI.Models.UnitPLBG", "Unit")
+                        .WithMany("Machines")
+                        .HasForeignKey("CostCenter")
+                        .HasPrincipalKey("CostCenter")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
+                    b.Navigation("Unit");
+                });
 
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+            modelBuilder.Entity("BackendAPI.Models.RemarkItem", b =>
+                {
+                    b.HasOne("BackendAPI.Models.Machine", "Machine")
+                        .WithMany()
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<string>("ItemText")
-                                .HasColumnType("nvarchar(max)");
+                    b.HasOne("BackendAPI.Models.Dashboard", "Dashboard")
+                        .WithMany("RemarkItems")
+                        .HasForeignKey("MachineId", "RecordDate")
+                        .HasPrincipalKey("MachineId", "RecordDate")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<DateTime>("RecordDate")
-                                .HasColumnType("datetime2");
+                    b.Navigation("Dashboard");
 
-                            b1.HasKey("MachineId", "Id");
+                    b.Navigation("Machine");
+                });
 
-                            b1.ToTable("RemarkItems");
-
-                            b1.WithOwner("Machine")
-                                .HasForeignKey("MachineId");
-
-                            b1.Navigation("Machine");
-                        });
-
+            modelBuilder.Entity("BackendAPI.Models.Dashboard", b =>
+                {
                     b.Navigation("RemarkItems");
+                });
+
+            modelBuilder.Entity("BackendAPI.Models.Machine", b =>
+                {
+                    b.Navigation("Dashboards");
+                });
+
+            modelBuilder.Entity("BackendAPI.Models.UnitPLBG", b =>
+                {
+                    b.Navigation("Machines");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,60 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table Machines {
+  MachineId int [pk, increment]
+  MachineName nvarchar(100) [not null]
+  MachineClass nvarchar(20) [not null]
+  MachineActive bit [not null]
+  CostCenter varchar(10) [not null]
+  MachineLine varchar(50) [not null]
+}
+
+Table UnitPLBG {
+  UnitId int [pk]
+  UnitName varchar(50) [not null]
+  CostCenter varchar(10) [not null, unique]
+}
+
+Table Dashboards {
+  Id int [pk, increment]
+  MachineId int [not null]
+  RecordDate datetime2(7) [not null]
+  Availability decimal(18,2) [not null]
+  Performance decimal(18,2) [not null]
+  Quality decimal(18,2) [not null]
+  OEE decimal(18,2) [not null]
+  Giveaway decimal(18,3) [not null]
+  ResponsiblePerson varchar(100) [not null]
+  LastUpdated datetime [not null]
+  Status int [not null]
+
+  Indexes {
+    (MachineId, RecordDate) [unique]
+  }
+}
+
+Table RemarkItems {
+  Id int [pk, increment]
+  MachineId int [not null]
+  RecordDate datetime2(7) [not null]
+  ItemText nvarchar(max) [note: 'Thai_CI_AS collation']
+}
+
+Table KPI {
+  Item int [pk]
+  Year int [not null]
+  UnitId int [not null]
+  Waste_Pellet_Target decimal(10,3)
+  Waste_Film_Target decimal(10,3)
+  GiveAway_Target decimal(10,3)
+  Oee_Target decimal(10,2)
+  GiveAwayMin decimal(10,3)
+  GiveAwayMax decimal(10,3)
+}
+
+// Relationships
+Ref: Machines.CostCenter > UnitPLBG.CostCenter
+Ref: Dashboards.MachineId > Machines.MachineId [delete: cascade]
+Ref: RemarkItems.(MachineId, RecordDate) > Dashboards.(MachineId, RecordDate) [delete: cascade]
+Ref: KPI.UnitId > UnitPLBG.UnitId [delete: restrict]
