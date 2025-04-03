@@ -1,0 +1,16 @@
+## Project specific
+DatabaseBackup/
+*.bak
+
+## Configurations
+appsettings.json
+!appsettings.example.json
+
+## Allow documentation
+!docs/
+!docs/**/*.md
+!docs/**/*.dbml
+
+## VS Code overrides
+!.vscode/settings.json
+!.vscode/snippets.code-snippets

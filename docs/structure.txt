@@ -1,0 +1,12 @@
+/Dashboard
+    /BackendAPI                  # .NET Core API project
+        /Controllers            # API Controllers
+        /Models                # Database Models
+        /DTOs                  # Data Transfer Objects
+        /Services             # Business Logic Services
+        /Data                # Database Context
+        /Configurations      # Entity Configurations
+        /Scripts            # SQL Scripts
+        /docs
+            /database       # Database Documentation
+            /api           # API Documentation & Examples

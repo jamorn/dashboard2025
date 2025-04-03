@@ -1,0 +1,38 @@
+{
+  "machines": [
+    { "machineId": 1, "machineName": "PP12/A" },
+    { "machineId": 2, "machineName": "PP12/C" }
+  ],
+  "lastRecords": [
+    {
+      "machineId": 1,
+      "recordDateString": "2024-03-26",
+      "availability": 100.00,
+      "performance": 95.50,
+      "quality": 100.00,
+      "oee": 95.50,
+      "giveaway": 25.110,
+      "remarks": [],
+      "lastUpdated": "2024-03-26T15:30:00",
+      "responsiblePerson": "John Doe",
+      "status": 1
+    },
+    {
+      "machineId": 2,
+      "recordDateString": "2024-03-26",
+      "availability": 55.96,
+      "performance": 92.62,
+      "quality": 100.00,
+      "oee": 51.83,
+      "giveaway": 25.117,
+      "remarks": [
+        "8.05-12:30 เครื่องจักร Alarm bottom welding unit บ่อยมาก",
+        "ทำการ Calibrate ใหม่แล้วก็ยังไม่หาย",
+        "รอกะบ่ายมาแก้ไขต่อ"
+      ],
+      "lastUpdated": "2024-03-26T12:45:00",
+      "responsiblePerson": "Jane Smith",
+      "status": 1
+    }
+  ]
+}

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>OEE & GiveAway Chart</title>
+    <meta name="description" content="chart created using amCharts live editor">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- amCharts javascript sources -->
+    <script type="text/javascript" src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script type="text/javascript" src="https://cdn.amcharts.com/lib/3/serial.js"></script>
+
+    <style>
+        .chart-style {
+            width: 100%;
+            height: 600px;
+        }
+
+        .bg-red {
+            background-color: #FF0000;
+        }
+
+        .bg-green {
+            background-color: #00FF00;
+        }
+
+        .bg-blue {
+            background-color: #0000FF;
+        }
+
+        .bg-gray {
+            background-color: #FFFFFF;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="chartdiv3" class="chart-style bg-gray"></div>
+    <div id="chartgiveaway" class="chart-style bg-gray"></div>
+
+    <script>
+        const Mockdata = {
+            "OEEDataListPP12A": [
+                {
+                    "Item": 1,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 90.98,
+                    "Quality": 100.00,
+                    "OEE": 90.98,
+                    "Giveaway": 25.113,
+                    "Remarks": [],
+                    "DateString": "2025-03-03",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 2,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 93.41,
+                    "Quality": 100.00,
+                    "OEE": 93.41,
+                    "Giveaway": 25.113,
+                    "Remarks": [],
+                    "DateString": "2025-03-04",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 3,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-05",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 4,
+                    "MachineName": "PP12/A",
+                    "Availability": 55.96,
+                    "Performance": 92.62,
+                    "Quality": 100.00,
+                    "OEE": 51.83,
+                    "Giveaway": 25.117,
+                    "Remarks": [
+                        "8.05-12:30 เครื่องจักร Alarm bottom welding unit บ่อยมากตั้งแต่เริ่ม Start แก้ใขทำการถอดชุด Bottom Seal ออกมาเปลี่ยน Teflon ใหม่และทำความสะอาดทุกซอกทุกมุมแต่ก็ยังไม่หาย",
+                        "ทำการ Carlibate ใหม่แล้วก็ยังไม่หาย ไฟสถานะขึ้นเป็น 0 เมื่อชุด Bottom ทำงานBag ไปปรับไป",
+                        "รอกะบ่ายมาแก้ใขต่อ wo 10875187  MI Check & Repair Bottom seal Line A Temp swing 14.30 - 16.30  MI เปลื่ยน Sealing Bar ใหม่ทั้งชุด"
+                    ],
+                    "DateString": "2025-03-06",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 5,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-07",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 6,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-08",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 7,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 91.00,
+                    "Quality": 100.00,
+                    "OEE": 91.00,
+                    "Giveaway": 25.115,
+                    "Remarks": [],
+                    "DateString": "2025-03-09",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 8,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 92.00,
+                    "Quality": 100.00,
+                    "OEE": 92.00,
+                    "Giveaway": 25.116,
+                    "Remarks": [],
+                    "DateString": "2025-03-10",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 9,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 93.00,
+                    "Quality": 100.00,
+                    "OEE": 93.00,
+                    "Giveaway": 25.117,
+                    "Remarks": [],
+                    "DateString": "2025-03-11",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 10,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 94.00,
+                    "Quality": 100.00,
+                    "OEE": 94.00,
+                    "Giveaway": 25.118,
+                    "Remarks": [],
+                    "DateString": "2025-03-12",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 11,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 95.00,
+                    "Quality": 100.00,
+                    "OEE": 95.00,
+                    "Giveaway": 25.119,
+                    "Remarks": [],
+                    "DateString": "2025-03-13",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 12,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 96.00,
+                    "Quality": 100.00,
+                    "OEE": 96.00,
+                    "Giveaway": 25.120,
+                    "Remarks": [],
+                    "DateString": "2025-03-14",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 13,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 97.00,
+                    "Quality": 100.00,
+                    "OEE": 97.00,
+                    "Giveaway": 25.121,
+                    "Remarks": [],
+                    "DateString": "2025-03-15",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 14,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 98.00,
+                    "Quality": 100.00,
+                    "OEE": 98.00,
+                    "Giveaway": 25.122,
+                    "Remarks": [],
+                    "DateString": "2025-03-16",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 15,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 90.71,
+                    "Quality": 100.00,
+                    "OEE": 90.71,
+                    "Giveaway": 25.119,
+                    "Remarks": [],
+                    "DateString": "2025-03-17",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 16,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 91.00,
+                    "Quality": 100.00,
+                    "OEE": 91.00,
+                    "Giveaway": 25.115,
+                    "Remarks": [],
+                    "DateString": "2025-03-18",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 17,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 92.00,
+                    "Quality": 100.00,
+                    "OEE": 92.00,
+                    "Giveaway": 25.116,
+                    "Remarks": [],
+                    "DateString": "2025-03-19",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 18,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 93.00,
+                    "Quality": 100.00,
+                    "OEE": 93.00,
+                    "Giveaway": 25.117,
+                    "Remarks": [],
+                    "DateString": "2025-03-20",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 19,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 94.00,
+                    "Quality": 100.00,
+                    "OEE": 94.00,
+                    "Giveaway": 25.118,
+                    "Remarks": [],
+                    "DateString": "2025-03-21",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 20,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 95.00,
+                    "Quality": 100.00,
+                    "OEE": 95.00,
+                    "Giveaway": 25.119,
+                    "Remarks": [],
+                    "DateString": "2025-03-22",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 21,
+                    "MachineName": "PP12/A",
+                    "Availability": 100.00,
+                    "Performance": 96.00,
+                    "Quality": 100.00,
+                    "OEE": 96.00,
+                    "Giveaway": 25.120,
+                    "Remarks": [],
+                    "DateString": "2025-03-23",
+                    "Color": "#059918",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                },
+                {
+                    "Item": 22,
+                    "MachineName": "PP12/A",
+                    "Availability": 0.00,
+                    "Performance": 0.00,
+                    "Quality": 0.00,
+                    "OEE": 0.00,
+                    "Giveaway": 25.110,
+                    "Remarks": ["เครื่องจักรหยุดทำงาน"],
+                    "DateString": "2025-03-24",
+                    "Color": "#ff0000",
+                    "OeeTarget": 85.0,
+                    "GiveAwayMin": 25.100,
+                    "GiveAwayMax": 25.115,
+                    "TitleOEE": "OEE Machine PP12/A",
+                    "TitleGiveAway": "GiveAway Machine PP12/A"
+                }
+            ]
+        }
+
+
+
+        // จำลองจาก db
+        makechart_oee(Mockdata)
+        makechart_give_away(Mockdata.OEEDataListPP12A)
+        function makechart_oee(obj) {
+            //console.log(obj.OEEDataListPP3A);
+            var chart = obj.OEEDataListPP12A;
+            console.log(chart[0].TitleOEE);
+            AmCharts.makeChart(chartdiv3,
+                {
+
+                    "type": "serial",
+                    "categoryField": "DateString",
+                    "startEffect": "easeOutSine",
+                    "dataDateFormat": "YYYY-MM-DD",
+                    "colors": [
+                        "#FF6600",
+                        "#CC0000",
+                        "#FB02F4",
+                        "#0D8ECF",
+                        "#02FB24",
+                        "#CD0D74",
+                        "#CC0000",
+                        "#00CC00",
+                        "#0000CC",
+                        "#DDDDDD",
+                        "#999999",
+                        "#333333",
+                        "#990000"
+                    ],
+                    "startDuration": 1,
+                    "color": "#070109",
+                    "fontSize": 14,
+                    "export": {
+                        "enabled": true
+                    },
+                    "categoryAxis": {
+                        "gridPosition": "start",
+                        "parseDates": true
+                    },
+                    "chartCursor": {
+                        "enabled": true
+                    },
+                    "chartScrollbar": {
+                        "enabled": true
+                    },
+                    "trendLines": [],
+                    "graphs": [
+                        {
+                            "fillAlphas": 1,
+                            "balloonText": "OEE:[[OEE]]%   [[remarkList]]", // เปลี่ยน remark เป็น remarkList
+                            "columnWidth": 0.5,
+                            "colorField": "Color", "lineColorField": "Color",// green
+                            "id": "AmGraph-1",
+                            "title": "OEE",
+                            "type": "column",
+                            "balloon": {
+                                "maxWidth": 500,  // กำหนดความกว้างสูงสุดที่ต้องการ
+                                "cornerRadius": 5,
+                                "pointerWidth": 5
+                            },
+                            "valueField": "OEE"
+                        },
+                        {
+                            "bullet": "diamond",
+                            "balloonText": "A:[[Availability]]",
+                            "id": "AmGraph-2",
+                            "lineColor": "#0D8ECF",// blue
+                            "title": "Availability Rate",
+                            "valueField": "Availability"
+                        },
+                        {
+                            "bullet": "square",
+                            "balloonText": "P:[[Performance]]%",
+                            "id": "AmGraph-3",
+                            "lineColor": "#F606B5",// pink
+                            "title": "Performance Efficiency Rate",
+                            "valueField": "Performance"
+                        },
+                        {
+                            "bullet": "triangleUp",
+                            "id": "AmGraph-4",
+                            "lineColor": "#6B8E23",//graph color: green// olivedrab #6B8E23
+                            "balloonText": "Q:[[Quality]]%",
+                            "title": "Quality Rate",
+                            "valueField": "Quality"
+                        },
+                        {
+                            "bullet": "custom",
+                            "balloonText": "Target:[[OeeTarget]] %",
+                            "id": "AmGraph-5",
+                            "lineColor": "#F6062F",
+                            "title": "Target",
+                            "valueField": "OeeTarget",
+                            "labelPosition": "top"
+
+                        }
+                    ],
+                    "guides": [],
+
+                    "valueAxes": [
+                        {
+                            "id": "ValueAxis-1",
+                            "title": "%"
+                        }
+                    ],
+                    "allLabels": [],
+                    "balloon": {},
+                    "legend": {
+                        "enabled": true,
+                        "autoMargins": true,
+                        "labelWidth": 0,
+                        "switchType": "v",
+                        "spacing": 1,
+                        "labelWidth": 2,
+                        "valueAlign": "left",
+                        "useGraphSettings": false,
+                        "valueWidth": 1
+
+                    },
+                    "titles": [
+                        {
+                            "id": "Title-1",
+                            "size": 15,
+                            "text": chart[0].TitleOEE
+                        }
+                    ],
+                    "dataProvider": chart,
+                    "listeners": [{
+                        "event": "dataUpdated",
+                        "method": function (e) {
+                            var chart = e.chart;
+                            for (var i = 0; i < chart.dataProvider.length; i++) {
+                                var dataItem = chart.dataProvider[i];
+                                if (dataItem.Remarks && dataItem.Remarks.length > 0) {
+                                    dataItem.remarkList = dataItem.Remarks.map(function (Remarks) {
+                                        return "<li style='text-align: left;'>" + Remarks + "</li>";
+                                    }).join("");
+                                    dataItem.remarkList = "<ul>" + dataItem.remarkList + "</ul>";
+                                } else {
+                                    dataItem.remarkList = "No Remarks";
+                                }
+                            }
+                            chart.validateData();
+                        }
+                    }]
+                }
+            );
+        }
+        function makechart_give_away(objchart) {
+            console.log(objchart);
+            console.log(objchart[0].TitleGiveAway);
+            var chart = objchart.filter(r => r.OEE > 0);
+            console.log("objchart คือ ", chart);
+            console.log("แถวแรก คือ ", chart[0]);
+            AmCharts.makeChart(chartgiveaway,
+                {
+                    "type": "serial",
+                    "categoryField": "DateString",
+                    "dataDateFormat": "YYYY-MM-DD",
+                    "minMarginLeft": 5,
+                    "handDrawScatter": 0,
+                    "categoryAxis": {
+                        "parseDates": true
+                    },
+                    "chartCursor": {
+                        "enabled": true
+                    },
+                    "chartScrollbar": {
+                        "enabled": true,
+                        "graphType": "line"
+                    },
+                    "trendLines": [],
+                    "graphs": [
+                        {
+                            "color": "#9400D3",
+                            "columnWidth": 0,
+                            "dashLength": 10,
+                            "fillColors": "#CC0000",
+                            "id": "AmGraph-1",
+                            "lineColor": "#CC0000",
+                            "lineThickness": 3,
+                            "title": "MAX",
+                            "valueField": "GiveAwayMax"
+                        },
+                        {
+                            "color": "#9400D3",
+                            "columnWidth": 0,
+                            "dashLength": 10,
+                            "fillColors": "#CC0000",
+                            "id": "AmGraph-2",
+                            "lineColor": "#CC0000",
+                            "lineThickness": 3,
+                            "title": "MIN",
+                            "valueField": "GiveAwayMin"
+                        },
+                        {
+                            "bullet": "square",
+                            "bulletBorderColor": "#0000FF",
+                            "bulletBorderThickness": 15,
+                            "bulletSize": 6,
+                            "descriptionField": "column-4",
+                            "fillColors": "#008000",
+                            "id": "AmGraph-3",
+                            "lineColor": "#008000",
+                            "markerType": "square",
+                            "minBulletSize": 2,
+                            "negativeFillAlphas": 0,
+                            "title": "Give Away",
+                            "valueField": "Giveaway"
+                        }
+                    ],
+                    "guides": [],
+
+                    "valueAxes": [
+                        {
+                            "id": "ValueAxis-1",
+                            "title": "kg"
+                        }
+                    ],
+
+                    "allLabels": [],
+                    "balloon": {},
+                    "legend": {
+                        "enabled": true,
+                        "autoMargins": true,
+                        "labelWidth": 0,
+                        "switchType": "v",
+                        "spacing": 1,
+                        "labelWidth": 2,
+                        "valueAlign": "left",
+                        "useGraphSettings": false,
+                        "valueWidth": 1
+
+                    },
+                    "titles": [
+                        {
+                            "id": "Title-1",
+                            "size": 15,
+                            "text": objchart[0].TitleGiveAway
+                        }
+                    ],
+                    "dataProvider": chart
+                }
+            );
+        }
+    </script>
+</body>
+
+</html>

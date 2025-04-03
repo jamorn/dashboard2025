@@ -19,11 +19,26 @@ public class OEEDataDTO
     public required string DateString { get; set; } // เปลี่ยนเป็น non-nullable
     public required string Color { get; set; }
     public decimal OeeTarget { get; set; }
-    public decimal GiveAwayTarget { get; set; } // ค่า Giveaway Target
+   // public decimal GiveAwayTarget { get; set; } // ค่า Giveaway Target
     public decimal GiveAwayMin { get; set; } //     ค่า Giveaway Min ค่าควบคุม ต่ำสุด
     public decimal GiveAwayMax { get; set; } //    ค่า Giveaway Max ค่าควบคุม สูงสุด
     public required string? TitleOEE { get; set; }     // สามารถเป็น null ได้ แต่ต้องถูกกำหนดค่า
     public required string TitleGiveAway { get; set; } // ไม่สามารถเป็น null ได้และต้องถูกกำหนดค่า
    
+
+}
+public class OEEDataDailyDashboardsDTO
+{
+    public int MachineId { get; set; } // รหัสเครื่องจักร
+    public required string RecordDateString { get; set; } = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd"); // วันที่บันทึกข้อมูล OEE
+    public required decimal Availability { get; set; } //    ความพร้อมใช้งาน
+    public required decimal Performance { get; set; } // ประสิทธิภาพ
+    public required decimal Quality { get; set; } //     คุณภาพ      
+    public decimal OEE { get; set; } // ค่า OEE
+    public decimal Giveaway { get; set; } // ค่า Giveaway
+    public string[]? Remarks { get; set; } // เปลี่ยนจาก string? Remark เป็น string[]? Remarks
+    public DateTime LastUpdated { get; set; } = DateTime.Now; // วันที่และเวลาที่มีการอัพเดทข้อมูลล่าสุด
+    public required string ResponsiblePerson { get; set; } = "default auto-generate"; // ผู้รับผิดชอบในการบันทึกข้อมูล
+    public int Status { get; set; } = 1; // สถานะของข้อมูล OEE
 
 }

@@ -13,25 +13,31 @@ namespace BackendAPI.Models
         public int Year { get; set; }
 
         [Required]
-        public int UnitId { get; set; }  // เปลี่ยนจาก string เป็น int
+        public int UnitId { get; set; }
 
+        [Required]
         [Column(TypeName = "decimal(10,3)")]
-        public decimal? Waste_Pellet_Target { get; set; }
+        public decimal Waste_Pellet_Target { get; set; }
 
+        [Required]
         [Column(TypeName = "decimal(10,3)")]
-        public decimal? Waste_Film_Target { get; set; }
+        public decimal Waste_Film_Target { get; set; }
 
+        [Required]
         [Column(TypeName = "decimal(10,3)")]
-        public decimal? GiveAway_Target { get; set; }
+        public decimal GiveAway_Target { get; set; }
 
+        [Required]
         [Column(TypeName = "decimal(10,2)")]
-        public decimal? Oee_Target { get; set; }
+        public decimal Oee_Target { get; set; }
 
+        [Required]
         [Column(TypeName = "decimal(10,3)")]
-        public decimal? GiveAwayMin { get; set; }
+        public decimal GiveAwayMin { get; set; }
 
+        [Required]
         [Column(TypeName = "decimal(10,3)")]
-        public decimal? GiveAwayMax { get; set; }
+        public decimal GiveAwayMax { get; set; }
 
         [ForeignKey("UnitId")]
         public virtual UnitPLBG Unit { get; set; } = null!;

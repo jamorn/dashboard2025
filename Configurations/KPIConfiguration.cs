@@ -10,36 +10,32 @@ namespace BackendAPI.Configurations
         {
             builder.HasKey(k => k.Item);
 
-            builder.Property(k => k.Year)
-                .IsRequired();
-
-            builder.Property(k => k.UnitId)
-                .IsRequired();
-
-            // Decimal properties
+            builder.Property(k => k.UnitId).IsRequired();
+            builder.Property(k => k.Year).IsRequired();
+            
             builder.Property(k => k.Waste_Pellet_Target)
                 .HasColumnType("decimal(10,3)")
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(k => k.Waste_Film_Target)
                 .HasColumnType("decimal(10,3)")
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(k => k.GiveAway_Target)
                 .HasColumnType("decimal(10,3)")
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(k => k.Oee_Target)
                 .HasColumnType("decimal(10,2)")
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(k => k.GiveAwayMin)
                 .HasColumnType("decimal(10,3)")
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(k => k.GiveAwayMax)
                 .HasColumnType("decimal(10,3)")
-                .IsRequired(false);
+                .IsRequired();
 
             // Relationship
             builder.HasOne(k => k.Unit)

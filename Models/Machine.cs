@@ -31,7 +31,7 @@ namespace BackendAPI.Models
 
         // Navigation properties
         [ForeignKey("CostCenter")]
-        public virtual UnitPLBG? Unit { get; set; }
+        public required virtual UnitPLBG Unit { get; set; } // This is the foreign key to UnitPLBG virtual ไว้เพื่อให้ EF Core ทำ lazy loading ได้
         public virtual ICollection<Dashboard> Dashboards { get; set; } = new List<Dashboard>();
     }
 }

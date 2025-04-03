@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Linq;
 using BackendAPI.DTOs;
+using BackendAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,8 @@ public class OEEController : ControllerBase
     {
         _context = context;
     }
-    [HttpGet("machine-oee-data")]
-    public async Task<ActionResult<MachineOEEData>> GetMachineOEEData()
+    [HttpGet("GetOEEDaily")]
+    public async Task<ActionResult<MachineOEEData>> GetOEEDaily()
     {
         try
         {
@@ -26,57 +27,75 @@ public class OEEController : ControllerBase
             var startDate = latestDate.AddDays(-29);
 
             var machines = await _context.Machines
-                .Where(m => m.MachineActive) // กรองเฉพาะเครื่องที่ active
+                .Where(m => m.MachineActive)
                 .ToListAsync();
             var machineOEEData = new MachineOEEData();
 
             foreach (var machine in machines)
             {
+                // ดึง KPI ปีล่าสุดของแต่ละ unit มาใช้ก่อน ในกรณีที่ยังไม่มีการกำหนดค่าในปีใหม่
+                var latestKpi = await _context.KPI
+                    .Where(k => k.UnitId == machine.Unit.UnitId)
+                    .OrderByDescending(k => k.Year)
+                    .FirstOrDefaultAsync();
+
+                if (latestKpi == null)
+                {
+                    return BadRequest($"No KPI data found for machine {machine.MachineName}");
+                }
+
                 var oeeData = _context.Dashboards
-                    .Include(d => d.Machine)
-                        .ThenInclude(m => m.Unit)  // Include Unit data
-                    .Include(d => d.RemarkItems)
-                    .Where(d => d.Machine.MachineName == machine.MachineName 
+                    .Where(d => d.MachineId == machine.MachineId 
                            && d.RecordDate >= startDate 
                            && d.RecordDate <= latestDate)
-                    .AsEnumerable()
                     .Join(
-                        _context.KPI.AsEnumerable(),
-                        oee => oee.Machine.Unit?.UnitId ?? 0,  // Join using UnitId with null check
-                        kpi => kpi.UnitId,
-                        (oee, kpi) => new { OEEData = oee, KPI = kpi }
+                        _context.Machines,
+                        d => d.MachineId,
+                        m => m.MachineId,
+                        (dashboard, machine) => new { Dashboard = dashboard, Machine = machine }
                     )
-                    .Where(x => x.KPI.Year == DateTime.Now.Year)
-                    .OrderBy(o => o.OEEData.RecordDate)
+                    .Join(
+                        _context.UnitPLBGs,
+                        dm => dm.Machine.CostCenter,
+                        u => u.CostCenter,
+                        (dm, unit) => new { dm.Dashboard, dm.Machine, Unit = unit }
+                    )
+                    .Join(
+                        _context.KPI
+                            .Where(k => k.UnitId == machine.Unit.UnitId)
+                            .OrderByDescending(k => k.Year),  // เรียงปีล่าสุดก่อน
+                        dmu => dmu.Unit.UnitId,
+                        kpi => kpi.UnitId,
+                        (dmu, kpi) => new { dmu.Dashboard, dmu.Machine, dmu.Unit, KPI = kpi }
+                    )
+                    .OrderBy(x => x.Dashboard.RecordDate)
+                    .Select(result => new OEEDataDTO
+                    {
+                        Item = 0, // Placeholder, will be updated later
+                        MachineName = result.Machine.MachineName,
+                        Availability = result.Dashboard.Availability,
+                        Performance = result.Dashboard.Performance,
+                        Quality = result.Dashboard.Quality,
+                        OEE = result.Dashboard.OEE,
+                        Giveaway = result.Dashboard.Giveaway,
+                        Remarks = result.Dashboard.RemarkItems
+                            .Select(r => r.ItemText)
+                            .Where(text => text != null)
+                            .Cast<string>()
+                            .ToArray(),
+                        DateString = result.Dashboard.RecordDate.ToString("yyyy-MM-dd"),
+                        Color = result.Dashboard.OEE > latestKpi.Oee_Target ? "#059918" : "#ff0000",
+                        OeeTarget = latestKpi.Oee_Target,  // ใช้ค่าจาก KPI ปีล่าสุดเสมอ
+                        GiveAwayMin = latestKpi.GiveAwayMin,
+                        GiveAwayMax = latestKpi.GiveAwayMax,
+                        TitleOEE = "OEE Machine " + result.Machine.MachineName,
+                        TitleGiveAway = "GiveAway Machine " + result.Machine.MachineName,
+                    })
                     .ToList();
-
-                var oeeDataDTOs = oeeData.Select((o, index) => new OEEDataDTO
-                {
-                    Item = index + 1,
-                    MachineName = o.OEEData.Machine.MachineName,
-                    Availability = o.OEEData.Availability,
-                    Performance = o.OEEData.Performance,
-                    Quality = o.OEEData.Quality,
-                    OEE = o.OEEData.OEE,
-                    Giveaway = o.OEEData.Giveaway,
-                    Remarks = o.OEEData.RemarkItems
-                        .Select(r => r.ItemText)
-                        .Where(text => text != null)
-                        .Cast<string>()
-                        .ToArray(),
-                    DateString = o.OEEData.RecordDate.ToString("yyyy-MM-dd"),
-                    Color = o.OEEData.OEE > o.KPI.Oee_Target ? "#059918" : "#ff0000",
-                    OeeTarget = o.KPI.Oee_Target ?? 0,
-                    GiveAwayMin = o.KPI.GiveAwayMin ?? 0,
-                    TitleOEE= "OEE Machine "+o.OEEData.Machine.MachineName,
-                    TitleGiveAway= "GiveAway  Machine "+o.OEEData.Machine.MachineName,
-                    GiveAwayMax = o.KPI.GiveAwayMax ?? 0,
-
-                }).ToList();
 
                 // เติมข้อมูลวันที่ที่ขาดหายไป
                 var allDates = Enumerable.Range(0, 30).Select(d => startDate.AddDays(d)).ToList();
-                var existingDates = oeeDataDTOs
+                var existingDates = oeeData
                     .Where(o => !string.IsNullOrEmpty(o.DateString))
                     .Select(o => DateTime.ParseExact(o.DateString!, "yyyy-MM-dd", CultureInfo.InvariantCulture))
                     .ToList();
@@ -84,9 +103,9 @@ public class OEEController : ControllerBase
 
                 foreach (var date in missingDates)
                 {
-                    oeeDataDTOs.Add(new OEEDataDTO
+                    oeeData.Add(new OEEDataDTO
                     {
-                        Item = oeeDataDTOs.Count() + 1,
+                        Item = oeeData.Count() + 1,
                         MachineName = machine.MachineName,
                         Availability = 0,
                         Performance = 0,
@@ -96,11 +115,11 @@ public class OEEController : ControllerBase
                         Remarks = new[] { "เครื่องจักรหยุดทำงาน" },
                         DateString = date.ToString("yyyy-MM-dd"),
                         Color = "#ff0000",
-                        OeeTarget = _context.KPI.FirstOrDefault(k => k.Year == date.Year)?.Oee_Target ?? 0,
-                        GiveAwayMin = _context.KPI.FirstOrDefault(k => k.Year == date.Year)?.GiveAwayMin ?? 0,
-                        GiveAwayMax = _context.KPI.FirstOrDefault(k => k.Year == date.Year)?.GiveAwayMax ?? 0,
+                        OeeTarget = latestKpi.Oee_Target,  // ใช้ค่าจาก KPI ปีล่าสุด
+                        GiveAwayMin = latestKpi.GiveAwayMin,
+                        GiveAwayMax = latestKpi.GiveAwayMax,
                         TitleOEE = "OEE Machine " + machine.MachineName,
-                        TitleGiveAway = "GiveAway  Machine " + machine.MachineName,
+                        TitleGiveAway = "GiveAway Machine " + machine.MachineName,
                     });
                 }
 
@@ -108,31 +127,31 @@ public class OEEController : ControllerBase
                 switch (machine.MachineName)
                 {
                     case "PP12/A":
-                        machineOEEData.OEEDataListPP12A = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPP12A = oeeData.ToList();
                         break;
                     case "PP12/C":
-                        machineOEEData.OEEDataListPP12C = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPP12C = oeeData.ToList();
                         break;
                     case "PP3/A":
-                        machineOEEData.OEEDataListPP3A = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPP3A = oeeData.ToList();
                         break;
                     case "PP3/B":
-                        machineOEEData.OEEDataListPP3B = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPP3B = oeeData.ToList();
                         break;
                     case "PPE/C":
-                        machineOEEData.OEEDataListPPEC = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPPEC = oeeData.ToList();
                         break;
                     case "PPE/D":
-                        machineOEEData.OEEDataListPPED = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPPED = oeeData.ToList();
                         break;
                     case "PPC/A":
-                        machineOEEData.OEEDataListPPCA = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPPCA = oeeData.ToList();
                         break;
                     case "PPC/B":
-                        machineOEEData.OEEDataListPPCB = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListPPCB = oeeData.ToList();
                         break;
                     case "HDPE/A":
-                        machineOEEData.OEEDataListHDPEA = oeeDataDTOs.ToList();
+                        machineOEEData.OEEDataListHDPEA = oeeData.ToList();
                         break;
                 }
             }
@@ -145,57 +164,8 @@ public class OEEController : ControllerBase
         }
     }
 
-    /* [HttpPost("save-oee-data")]
-    public async Task<IActionResult> SaveOEEData([FromBody] OEEDataDTO oeeData)
-    { 
-
-        try
-        {
-            var recordDate = DateTime.ParseExact(oeeData.DateString, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            var machine = await _context.Machines.FirstOrDefaultAsync(m => m.MachineId == oeeData.Machine);
-
-            if (machine == null)
-            {
-                return BadRequest("Invalid machine ID.");
-            }
-
-            var dashboardRecord = new Dashboard
-            {
-                MachineId = oeeData.Machine,
-                RecordDate = recordDate,
-                Availability = oeeData.Availability,
-                Performance = oeeData.Performance,
-                Quality = oeeData.Quality,
-                OEE = oeeData.OEE,
-                Giveaway = oeeData.GiveAway
-            };
-
-            _context.dashboards.Add(dashboardRecord);
-            await _context.SaveChangesAsync();
-
-            if (oeeData.Remark != null && oeeData.Remark.Any())
-            {
-                foreach (var remarkText in oeeData.Remark)
-                {
-                    var remarkItem = new RemarkItem
-                    {
-                        MachineId = oeeData.Machine,
-                        RecordDate = recordDate,
-                        ItemText = remarkText
-                    };
-                    _context.RemarkItems.Add(remarkItem);
-                }
-                await _context.SaveChangesAsync();
-            }
-
-            return Ok("Data saved successfully!");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("Error saving data: " + ex.Message);
-        }
-
-    } */
+   
+    
 }
 
 }
